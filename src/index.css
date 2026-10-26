@@ -1,0 +1,117 @@
+:root {
+  /* === BASE COLORS === */
+  --color-white: #ffffff;
+  --color-black: #000000;
+
+  /* === PRIMARY COLORS === */
+  --color-primary: #8C2E47;
+  --color-primary-light: #b74e6a;
+  --color-primary-dark: #5f1f31;
+
+  /* === SECONDARY COLORS === */
+  --color-secondary: #F28241;
+  --color-secondary-light: #f8a369;
+  --color-secondary-dark: #c6632b;
+
+  /* === TERTIARY COLOR === */
+  --color-tertiary: #731702;
+
+  /* === ACCENT COLORS === */
+  --color-accent: #083A59;
+  --color-accent-light: #225b7a;
+  --color-accent-dark: #021e30;
+
+  /* === NEUTRAL COLORS === */
+  --color-neutral: #BF533B;
+  --color-neutral-light: #d97a62;
+  --color-neutral-dark: #8c3928;
+
+  /* === BACKGROUND COLORS === */
+  --bg-default: var(--color-white);
+  --bg-light: #f9f9f9;
+  --bg-gray: #e0e0e0;
+  --bg-dark: #333333;
+
+  /* === TEXT COLORS === */
+  --text-main: #2d2d2d;
+  --text-light: #666666;
+  --text-gray: #a0a0a0;
+  --text-dark: #1a1a1a;
+  --text-white: var(--color-white);
+}
+
+/* === BASE STYLES === */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--bg-default);
+  color: var(--text-main);
+}
+
+/* === BACKGROUND UTILITIES === */
+.bg-color-primary {
+  background-color: var(--color-primary) !important;
+  color: var(--text-white) !important;
+}
+.bg-color-secondary {
+  background-color: var(--color-secondary) !important;
+  color: var(--text-dark) !important;
+}
+.bg-color-accent {
+  background-color: var(--color-accent) !important;
+  color: var(--text-white) !important;
+}
+.bg-color-neutral {
+  background-color: var(--color-neutral) !important;
+  color: var(--text-white) !important;
+}
+.bg-color-light {
+  background-color: var(--bg-light) !important;
+}
+.bg-color-gray {
+  background-color: var(--bg-gray) !important;
+}
+.bg-color-dark {
+  background-color: var(--bg-dark) !important;
+  color: var(--text-white) !important;
+}
+
+/* === TEXT UTILITIES === */
+.text-color-primary {
+  color: var(--color-primary) !important;
+}
+.text-color-primary-hover:hover {
+  color: var(--color-primary) !important;
+  opacity: 0.8;
+}
+.text-color-secondary {
+  color: var(--color-secondary) !important;
+}
+.text-color-accent {
+  color: var(--color-accent) !important;
+}
+.text-color-neutral {
+  color: var(--color-neutral) !important;
+}
+.text-color-light {
+  color: var(--text-light) !important;
+}
+.text-color-gray {
+  color: var(--text-gray) !important;
+}
+.text-color-dark {
+  color: var(--text-dark) !important;
+}
+.text-color-white {
+  color: var(--text-white) !important;
+}
+
+/* === ACTIVE STATES === */
+.active,
+.Mui-checked {
+  color: var(--color-primary) !important;
+}
+.css-yseucu-MuiDataGrid-columnHeaderRow {
+  background-color: transparent !important;
+}
