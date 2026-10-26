@@ -31,7 +31,7 @@ const Compte = lazy(() => import("../components/Compte/Compte").then(module => (
 const InfoPersonelle = lazy(() => import("../pages/monprofile/InfoPersonelle").then(module => ({ default: module.InfoPersonelle || module.default })));
 
 // Utilisateurs avec lazy loading
-const Utilisateur = lazy(() => import("../components/Utilisateur/utilisateur").then(module => ({ default: module.Utilisateur || module.default })));
+const Utilisateur = lazy(() => import("../components/Utilisateur/Utilisateur").then(module => ({ default: module.Utilisateur || module.default })));
 const Liste = lazy(() => import("../components/Utilisateur/Liste/Liste").then(module => ({ default: module.Liste || module.default })));
 const Detail = lazy(() => import("../components/Utilisateur/Liste/Detail/Detail").then(module => ({ default: module.Detail || module.default })));
 const Demande = lazy(() => import("../components/Utilisateur/Demande/Demande").then(module => ({ default: module.Demande || module.default })));
