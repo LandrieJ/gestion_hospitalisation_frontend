@@ -60,5 +60,5 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/rasoa-production-frontend:${{ github.sha }}
-            ${{ secrets.DOCKERHUB_USERNAME }}/rasoa-production-frontend:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/gestion_hospitalisation_frontend:${{ github.sha }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/gestion_hospitalisation_frontend:latest
