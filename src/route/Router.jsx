@@ -27,7 +27,12 @@ const Accueil = lazy(() => import("../pages/Accueil/Accueil").then(module => ({ 
 
 // Composants internes avec lazy loading
 const Index = lazy(() => import("../components/index/Index").then(module => ({ default: module.Index || module.default })));
-const Compte = lazy(() => import("../components/compte/Compte").then(module => ({ default: module.Compte || module.default })));
+//const Compte = lazy(() => import("../components/compte/Compte").then(module => ({ default: module.Compte || module.default })));
+const Compte = lazy(() =>
+  import("../components/compte/Compte.jsx").then((module) => ({
+    default: module.Compte || module.default,
+  }))
+);
 const InfoPersonelle = lazy(() => import("../pages/monprofile/InfoPersonelle").then(module => ({ default: module.InfoPersonelle || module.default })));
 
 // Utilisateurs avec lazy loading
