@@ -1,21 +1,22 @@
-# Étape 1 : Image Node pour le développement Vite
-FROM node:22
-# FROM node:18-alpine
 
-# Définir le dossier de travail
+# Étape 1 : Construire l'application React + Vite
+FROM node:22-alpine AS build
+
 WORKDIR /app
 
-# Copier les fichiers package.json et package-lock.json en premier pour profiter du cache Docker
 COPY front-end/package*.json ./
 
-# Installer les dépendances
-RUN npm install --legacy-peer-deps
+RUN npm ci --legacy-peer-deps
 
-# Copier tout le code source
 COPY front-end/ ./
 
-# Exposer le port utilisé par Vite (par défaut 5173)
+RUN npm run build
+
+# Étape 2 : Servir l'application avec Nginx
+FROM nginx:alpine
+
+COPY --from=build /app/dist/ /usr/share/nginx/html/
+
 EXPOSE 1003
 
-# Commande pour démarrer Vite en mode dev
-CMD ["npm", "run", "dev"]
+CMD ["nginx", "-g", "daemon off;"]
