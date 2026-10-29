@@ -86,11 +86,11 @@ jobs:
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          kubectl set image deployment/hospitalisation-frontend \
+          kubectl set image deployment/hospitalisation_frontend \
             frontend="${DOCKERHUB_USERNAME}/gestion_hospitalisation_frontend:${IMAGE_TAG}" \
             -n hospitalisation
 
       - name: Wait for rollout
         run: |
-          kubectl rollout status deployment/hospitalisation-frontend \
+          kubectl rollout status deployment/hospitalisation_frontend \
             -n hospitalisation --timeout=180s
