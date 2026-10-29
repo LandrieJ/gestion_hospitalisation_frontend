@@ -1,4 +1,3 @@
-
 name: React Vite CI/CD
 
 on:
@@ -65,18 +64,19 @@ jobs:
     needs: publish
     if: github.event_name != 'pull_request'
 
-    env:
-      OCI_CLI_USER: ${{ secrets.OCI_CLI_USER }}
-      OCI_CLI_TENANCY: ${{ secrets.OCI_CLI_TENANCY }}
-      OCI_CLI_FINGERPRINT: ${{ secrets.OCI_CLI_FINGERPRINT }}
-      OCI_CLI_KEY_CONTENT: ${{ secrets.OCI_CLI_KEY_CONTENT }}
-      OCI_CLI_REGION: ${{ secrets.OCI_CLI_REGION }}
-
     steps:
       - name: Configure kubectl for OKE
         uses: oracle-actions/configure-kubectl-oke@v1.5.0
         with:
           cluster: ${{ secrets.OKE_CLUSTER_OCID }}
+          # Ajout des configurations obligatoires pour l'action Oracle
+          user: ${{ secrets.OCI_CLI_USER }}
+          tenancy: ${{ secrets.OCI_CLI_TENANCY }}
+          fingerprint: ${{ secrets.OCI_CLI_FINGERPRINT }}
+          region: ${{ secrets.OCI_CLI_REGION }}
+          user_private_key: ${{ secrets.OCI_CLI_KEY_CONTENT }}
+          # Ajout de la clé de déchiffrement pour la clé PEM chiffrée
+          user_private_key_passphrase: ${{ secrets.OCI_CLI_KEY_PASSPHRASE }}
 
       - name: Verify cluster access
         run: kubectl get nodes
