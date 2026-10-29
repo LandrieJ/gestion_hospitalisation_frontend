@@ -5,11 +5,9 @@ on:
   push:
     branches:
       - main
-
   pull_request:
     branches:
       - main
-
   workflow_dispatch:
 
 jobs:
@@ -60,3 +58,39 @@ jobs:
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/gestion_hospitalisation_frontend:${{ github.sha }}
             ${{ secrets.DOCKERHUB_USERNAME }}/gestion_hospitalisation_frontend:latest
+
+  deploy:
+    name: Deploy to OKE
+    runs-on: ubuntu-24.04
+    needs: publish
+    if: github.event_name != 'pull_request'
+
+    env:
+      OCI_CLI_USER: ${{ secrets.OCI_CLI_USER }}
+      OCI_CLI_TENANCY: ${{ secrets.OCI_CLI_TENANCY }}
+      OCI_CLI_FINGERPRINT: ${{ secrets.OCI_CLI_FINGERPRINT }}
+      OCI_CLI_KEY_CONTENT: ${{ secrets.OCI_CLI_KEY_CONTENT }}
+      OCI_CLI_REGION: ${{ secrets.OCI_CLI_REGION }}
+
+    steps:
+      - name: Configure kubectl for OKE
+        uses: oracle-actions/configure-kubectl-oke@v1.5.0
+        with:
+          cluster: ${{ secrets.OKE_CLUSTER_OCID }}
+
+      - name: Verify cluster access
+        run: kubectl get nodes
+
+      - name: Update frontend image
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          kubectl set image deployment/hospitalisation_frontend \
+            frontend="${DOCKERHUB_USERNAME}/gestion_hospitalisation_frontend:${IMAGE_TAG}" \
+            -n hospitalisation
+
+      - name: Wait for rollout
+        run: |
+          kubectl rollout status deployment/hospitalisation_frontend \
+            -n hospitalisation --timeout=180s
