@@ -1,3 +1,4 @@
+
 name: React Vite CI/CD
 
 on:
@@ -62,34 +63,41 @@ jobs:
             docker.io/${{ secrets.DOCKERHUB_USERNAME }}/gestion_hospitalisation_frontend:${{ github.sha }}
             docker.io/${{ secrets.DOCKERHUB_USERNAME }}/gestion_hospitalisation_frontend:latest
 
-  update-manifest:
-    name: Update Kubernetes Manifest for Argo CD
+  deploy:
+    name: Deploy to Oracle Kubernetes Engine
     runs-on: ubuntu-24.04
     needs: publish
     if: github.event_name != 'pull_request'
 
+    env:
+      OCI_CLI_USER: ${{ secrets.OCI_CLI_USER }}
+      OCI_CLI_TENANCY: ${{ secrets.OCI_CLI_TENANCY }}
+      OCI_CLI_FINGERPRINT: ${{ secrets.OCI_CLI_FINGERPRINT }}
+      OCI_CLI_KEY_CONTENT: ${{ secrets.OCI_CLI_KEY_CONTENT }}
+      OCI_CLI_REGION: ${{ secrets.OCI_CLI_REGION }}
+
     steps:
-      - name: Checkout source code
-        uses: actions/checkout@v5
+      - name: Configure kubectl for OKE
+        uses: oracle-actions/configure-kubectl-oke@v1.5.0
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          cluster: ${{ secrets.OKE_CLUSTER_OCID }}
 
-      - name: Update frontend image in Kubernetes manifest
+      - name: Verify OKE connection
         run: |
-          ls -al
-          sed -i "s|image: .*gestion_hospitalisation_frontend:.*|image: docker.io/${{ secrets.DOCKERHUB_USERNAME }}/gestion_hospitalisation_frontend:${{ github.sha }}|" kubernetes/frontend/deployment.yaml
+          kubectl config current-context
+          kubectl get nodes
 
-      - name: Deploy to Kubernetes
+      - name: Update frontend image
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          IMAGE_TAG: ${{ github.sha }}
         run: |
           kubectl set image deployment/hospitalisation-frontend \
-            frontend=docker.io/${{ secrets.DOCKERHUB_USERNAME }}/gestion_hospitalisation_frontend:${{ github.sha }} \
+            frontend="docker.io/${DOCKERHUB_USERNAME}/gestion_hospitalisation_frontend:${IMAGE_TAG}" \
             -n hospitalisation
 
-
-      - name: Commit and push manifest update
+      - name: Verify frontend deployment
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add kubernetes/frontend/deployment.yaml
-          git commit -m "chore: update frontend image to ${{ github.sha }}" || echo "No changes to commit"
-          git push
+          kubectl rollout status deployment/hospitalisation-frontend \
+            -n hospitalisation --timeout=180s
+          kubectl get pods -n hospitalisation
