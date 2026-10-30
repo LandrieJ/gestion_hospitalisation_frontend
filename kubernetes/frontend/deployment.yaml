@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hospitalisation-frontend
+  namespace: hospitalisation
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hospitalisation-frontend
+  template:
+    metadata:
+      labels:
+        app: hospitalisation-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: docker.io/landrie/gestion_hospitalisation_frontend:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 1003
