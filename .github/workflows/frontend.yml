@@ -80,7 +80,7 @@ jobs:
 
       - name: Deploy to Kubernetes
         run: |
-          kubectl set image deployment/hospitalisation_frontend \
+          kubectl set image deployment/hospitalisation-frontend \
             frontend=docker.io/${{ secrets.DOCKERHUB_USERNAME }}/gestion_hospitalisation_frontend:${{ github.sha }} \
             -n hospitalisation
 
