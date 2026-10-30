@@ -76,6 +76,7 @@ jobs:
 
       - name: Update frontend image in Kubernetes manifest
         run: |
+          ls -al
           sed -i "s|image: .*gestion_hospitalisation_frontend:.*|image: docker.io/${{ secrets.DOCKERHUB_USERNAME }}/gestion_hospitalisation_frontend:${{ github.sha }}|" kubernetes/frontend/deployment.yaml
 
       - name: Deploy to Kubernetes
