@@ -1,4 +1,3 @@
-```yaml
 name: React Vite CI/CD
 
 on:
@@ -78,6 +77,12 @@ jobs:
       - name: Update frontend image in Kubernetes manifest
         run: |
           sed -i "s|image: .*gestion_hospitalisation_frontend:.*|image: docker.io/${{ secrets.DOCKERHUB_USERNAME }}/gestion_hospitalisation_frontend:${{ github.sha }}|" kubernetes/frontend/deployment.yaml
+
+      - name: Deploy to Kubernetes
+        run: |
+          kubectl set image deployment/hospitalisation-frontend \
+            frontend=docker.io/${{ secrets.DOCKERHUB_USERNAME }}/gestion_hospitalisation_frontend:${{ github.sha }} \
+            -n hospitalisation
 
       - name: Commit and push manifest update
         run: |
