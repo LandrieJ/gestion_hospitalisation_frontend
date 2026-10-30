@@ -84,6 +84,7 @@ jobs:
             frontend=docker.io/${{ secrets.DOCKERHUB_USERNAME }}/gestion_hospitalisation_frontend:${{ github.sha }} \
             -n hospitalisation
 
+
       - name: Commit and push manifest update
         run: |
           git config user.name "github-actions[bot]"
