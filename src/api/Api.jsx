@@ -1,14 +1,16 @@
+
 import axios from "axios";
 
-axios.defaults.withCredentials = true;
-
 const api = axios.create({
-   baseURL: "/",
+    baseURL: "/",
     withCredentials: true,
     headers: {
         "Content-Type": "application/json",
     },
 });
+
+// Récupération du CSRF Token
+let csrfPromise = null;
 
 async function fetchCsrfToken() {
     try {
@@ -18,27 +20,41 @@ async function fetchCsrfToken() {
         if (csrfToken) {
             localStorage.setItem("csrftoken", csrfToken);
         }
+
+        return csrfToken;
     } catch (error) {
-        console.error("Erreur lors de la récupération du CSRF token :", error);
+        console.error("Erreur récupération CSRF :", error);
+        throw error;
     }
 }
 
-
-fetchCsrfToken();
-
+// Intercepteur des requêtes
 api.interceptors.request.use(
-    (config) => {
-        const csrfToken = localStorage.getItem("csrftoken");
-        if (csrfToken) {
-            config.headers["X-CSRFToken"] = csrfToken;
-        } else {
-            console.warn("CSRF Token introuvable !");
+    async (config) => {
+        const method = config.method?.toLowerCase();
+
+        if (["post", "put", "patch", "delete"].includes(method)) {
+            let csrfToken = localStorage.getItem("csrftoken");
+
+            if (!csrfToken) {
+                if (!csrfPromise) {
+                    csrfPromise = fetchCsrfToken()
+                        .finally(() => {
+                            csrfPromise = null;
+                        });
+                }
+
+                csrfToken = await csrfPromise;
+            }
+
+            if (csrfToken) {
+                config.headers["X-CSRFToken"] = csrfToken;
+            }
         }
+
         return config;
     },
-    (error) => {
-        return Promise.reject(error);
-    }
+    (error) => Promise.reject(error)
 );
 
 export default api;
