@@ -45,7 +45,7 @@ export const Login = () => {
             await apiToPost("comptes/login/", { email, password });
             window.location.reload();
         } catch (error) {
-            setError(error.message);
+            console.error("Erreur connexion :", error);
         } finally {
             setLoading(false);
         }
