@@ -361,7 +361,7 @@ export const SaHospital = () => {
                                 <LocalHospitalIcon />
                             </Avatar>
                             <Box>
-                                <Typography color="text.secondary" variant="body2">Total Hôpitaux</Typography>
+                                <Typography color="text.secondary" variant="body2">Total Hôpitaux Tananarivo</Typography>
                                 <Typography variant="h5" fontWeight="bold">{hospitals.length}</Typography>
                             </Box>
                         </CardContent>
