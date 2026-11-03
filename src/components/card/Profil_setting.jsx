@@ -37,7 +37,7 @@ export const Profil_setting = ({ nomUtilisateur = 'Utilisateur', photoUtilisateu
             padding: 0,
             backgroundColor: 'white',
             '&:hover': {
-              backgroundColor: 'rgba(0, 0, 0, 0.04)',
+              backgroundColor: 'rgba(94, 22, 80, 0.04)',
             },
           }}
         >
