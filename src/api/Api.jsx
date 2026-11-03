@@ -1,4 +1,4 @@
-
+javascript
 import axios from "axios";
 
 const api = axios.create({
@@ -9,44 +9,27 @@ const api = axios.create({
     },
 });
 
-// ==========================================
-// GESTION DU TOKEN CSRF
-// ==========================================
-
 let csrfPromise = null;
 
-/**
- * Récupération du token CSRF depuis Django.
- */
+// Récupération du token CSRF
 export const fetchCsrfToken = async (forceRefresh = false) => {
-    // Éviter de réutiliser un ancien token si actualisation demandée
     if (forceRefresh) {
         localStorage.removeItem("csrftoken");
         csrfPromise = null;
     }
 
-    // Éviter plusieurs appels simultanés
     if (!csrfPromise) {
         csrfPromise = api
-            .get("comptes/get-csrf-token/")
+            .get("/comptes/get-csrf-token/")
             .then((response) => {
                 const csrfToken = response.data?.csrfToken;
 
                 if (!csrfToken) {
-                    throw new Error("Token CSRF introuvable dans la réponse Django.");
+                    throw new Error("Token CSRF introuvable.");
                 }
 
                 localStorage.setItem("csrftoken", csrfToken);
-
                 return csrfToken;
-            })
-            .catch((error) => {
-                console.error(
-                    "Erreur lors de la récupération du CSRF Token :",
-                    error.response?.data || error.message
-                );
-
-                throw error;
             })
             .finally(() => {
                 csrfPromise = null;
@@ -56,54 +39,32 @@ export const fetchCsrfToken = async (forceRefresh = false) => {
     return csrfPromise;
 };
 
-// ==========================================
-// INTERCEPTEUR DES REQUÊTES
-// ==========================================
+// Intercepteur des requêtes
+api.interceptors.request.use(async (config) => {
+    const method = config.method?.toLowerCase();
 
-api.interceptors.request.use(
-    async (config) => {
-        const method = config.method?.toLowerCase();
+    const protectedMethods = ["post", "put", "patch", "delete"];
 
-        const protectedMethods = [
-            "post",
-            "put",
-            "patch",
-            "delete",
-        ];
+    if (protectedMethods.includes(method)) {
+        let csrfToken = localStorage.getItem("csrftoken");
 
-        if (protectedMethods.includes(method)) {
-            let csrfToken = localStorage.getItem("csrftoken");
-
-            // Récupérer le token si absent
-            if (!csrfToken) {
-                csrfToken = await fetchCsrfToken();
-            }
-
-            // Ajouter le token dans les headers
-            if (csrfToken) {
-                config.headers = config.headers || {};
-                config.headers["X-CSRFToken"] = csrfToken;
-            }
+        if (!csrfToken) {
+            csrfToken = await fetchCsrfToken();
         }
 
-        return config;
-    },
-    (error) => {
-        return Promise.reject(error);
+        config.headers = config.headers || {};
+        config.headers["X-CSRFToken"] = csrfToken;
     }
-);
 
-// ==========================================
-// INTERCEPTEUR DES RÉPONSES
-// ==========================================
+    return config;
+});
 
+// Intercepteur des réponses
 api.interceptors.response.use(
     (response) => response,
     async (error) => {
         const originalRequest = error.config;
 
-        // Si Django refuse le CSRF avec un 403,
-        // récupérer un nouveau token et réessayer une seule fois.
         if (
             error.response?.status === 403 &&
             originalRequest &&
@@ -117,9 +78,6 @@ api.interceptors.response.use(
             try {
                 const newToken = await fetchCsrfToken(true);
 
-                originalRequest.headers =
-                    originalRequest.headers || {};
-
                 originalRequest.headers["X-CSRFToken"] = newToken;
 
                 return api(originalRequest);
@@ -132,9 +90,5 @@ api.interceptors.response.use(
         return Promise.reject(error);
     }
 );
-
-// ==========================================
-// EXPORT
-// ==========================================
 
 export default api;
