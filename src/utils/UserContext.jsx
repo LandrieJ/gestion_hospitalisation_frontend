@@ -11,7 +11,7 @@ export const UserProvider = ({ children }) => {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const userData = await apiTogetAll('comptes/session/',{ withCredentials: true });
+                const userData = await apiTogetAll('comptes/session/');
                 setUser(userData);
             } catch {
                 setUser(null)
