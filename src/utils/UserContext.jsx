@@ -14,6 +14,7 @@ export const UserProvider = ({ children }) => {
                 const userData = await apiTogetAll('comptes/session/');
                 setUser(userData);
             } catch {
+                  console.error("Erreur récupération session :", error);
                 setUser(null)
             } finally {
                 setLoading(false)
