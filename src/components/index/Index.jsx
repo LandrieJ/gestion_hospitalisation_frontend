@@ -185,7 +185,7 @@ export const Index = () => {
 
     const hospitalData = {
         hospitalInfo: {
-            name: user?.hospital?.name || "Centre Hospitalier Universitaire",
+            name: user?.hospital?.name || "Centre Hospitaler  ",
             code: user?.hospital?.code || "Code non disponible",
             address: user?.hospital?.address || "Adresse non disponible",
             phone: user?.hospital?.phone_number || "Téléphone non disponible",
