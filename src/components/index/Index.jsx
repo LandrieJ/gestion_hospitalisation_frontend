@@ -185,7 +185,7 @@ export const Index = () => {
 
     const hospitalData = {
         hospitalInfo: {
-            name: user?.hospital?.name || "Centre Hospitaler",
+            name: user?.hospital?.name || "Centre Hospitaler de l ENI le 20 novembre 2026 7h30",
             code: user?.hospital?.code || "Code non disponible",
             address: user?.hospital?.address || "Adresse non disponible",
             phone: user?.hospital?.phone_number || "Téléphone non disponible",
